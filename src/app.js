@@ -1,10 +1,9 @@
 const express = require('express');
 const path = require('path');
-const db = require('./config/db.js');
+const pool = require('./config/db.js');
+const db = require('./db/queries.js');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
-
-require('./db/init.js');
 
 const { hashPassword, generateSalt } = require('./lib/authUtils.js');
 
@@ -16,7 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(
 	session({
 		store: new pgSession({
-			pool: db,
+			pool: pool,
 			createTableIfMissing: true,
 		}),
 		secret: process.env.EXPRESS_SESSION_SECRET,
@@ -58,11 +57,11 @@ function checkAdmin(req, res, next) {
 
 app.get('/home', checkAuth, (req, res) => res.render('home', { username: req.user.username }));
 
-app.post('/message/create', checkAuth, (req, res) => {
-	const username = req.user.username;
+app.post('/message/create', checkAuth, async (req, res) => {
+	const userId = req.user.id;
 	const message = req.body.new_message;
 
-	db.query('INSERT INTO messages (user_id, content, time) VALUES ($1, $2, $3)');
+	await db.insertNewMessage(userId, message);
 
 	res.redirect('/home');
 });

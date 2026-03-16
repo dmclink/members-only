@@ -1,13 +1,13 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const db = require('../config/db.js');
+const db = require('../db/queries.js');
 const crypto = require('crypto');
 
 const { validatePassword } = require('../lib/authUtils.js');
 
 const verifyCallback = (req, username, password, done) => {
 	req.session.messages = [];
-	db.query('SELECT * FROM users WHERE username = $1', [username])
+	db.getUserByUsername(username)
 		.then((result) => {
 			const user = result.rows[0];
 			if (!user) {
@@ -35,7 +35,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((userId, done) => {
-	db.query('SELECT * FROM users WHERE id = $1', [userId])
+	db.getUserById(userId)
 		.then((result) => {
 			const user = result.rows[0];
 			done(null, user);
