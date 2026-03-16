@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+        <h1>Login Page</h1>
     <form action="/login/password" method="post">
     <div>
         <label for="username">Username</label>
@@ -18,6 +19,11 @@
     <div>
         <button type="submit">Sign in</button>
     </div>
+            <% if (messages && messages.length > 0) { %>
+            <% for (const message of messages) { %>
+            <p class="error-message"><%= message %></p>
+            <% } %>
+            <% } %>
 </form>
 </body>
 </html>

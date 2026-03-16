@@ -29,8 +29,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
-	console.log('session:', req.session);
-	console.log('user:', req.user);
 	next();
 });
 
@@ -39,7 +37,7 @@ app.use(express.urlencoded());
 
 app.get('/', (req, res) => res.send('<h1>Hello World</h1>'));
 app.get('/login', (req, res, next) => {
-	res.render('login');
+	res.render('login', { messages: req.session.messages });
 });
 
 app.get('/logout', (req, res) => {
@@ -51,7 +49,10 @@ app.get('/logout', (req, res) => {
 	});
 });
 
-app.post('/login/password', passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login' }));
+app.post(
+	'/login/password',
+	passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login', failureMessage: true }),
+);
 
 app.get('/home', (req, res) => res.render('home'));
 

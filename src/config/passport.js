@@ -5,7 +5,8 @@ const crypto = require('crypto');
 
 const { validatePassword } = require('../lib/authUtils.js');
 
-const verifyCallback = (username, password, done) => {
+const verifyCallback = (req, username, password, done) => {
+	req.session.messages = [];
 	db.query('SELECT * FROM users WHERE username = $1', [username])
 		.then((result) => {
 			const user = result.rows[0];
@@ -25,7 +26,7 @@ const verifyCallback = (username, password, done) => {
 		})
 		.catch((err) => done(err));
 };
-const strategy = new LocalStrategy(verifyCallback);
+const strategy = new LocalStrategy({ passReqToCallback: true }, verifyCallback);
 
 passport.use(strategy);
 
