@@ -1,4 +1,5 @@
 const db = require('../config/db.js');
+
 function getUserById(userId) {
 	return db.query('SELECT * FROM users WHERE id = $1', [userId]);
 }
@@ -33,4 +34,4 @@ function insertNewMessage(userId, content) {
 	]);
 }
 
-module.exports = { getUserByUsername, insertNewUser, insertNewMessage };
+module.exports = { getUserById, getUserByUsername, insertNewUser, insertNewMessage };
