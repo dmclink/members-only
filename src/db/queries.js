@@ -42,4 +42,22 @@ function insertNewMessage(userId, content) {
 	]);
 }
 
-module.exports = { getUserById, getUserByUsername, insertNewUser, insertNewMessage, usernameAlreadyExists };
+function getAllMessagesWithClubCode() {
+	const query = `
+        SELECT username, club_code, message, timestamp 
+        FROM messages
+        JOIN users
+        ON users.id = messages.user_id
+    `;
+
+	return db.query(query);
+}
+
+module.exports = {
+	getUserById,
+	getUserByUsername,
+	insertNewUser,
+	insertNewMessage,
+	usernameAlreadyExists,
+	getAllMessagesWithClubCode,
+};

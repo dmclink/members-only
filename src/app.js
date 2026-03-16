@@ -4,10 +4,13 @@ const pool = require('./config/db.js');
 const db = require('./db/queries.js');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const { truncateString } = require('./lib/stringUtils.js');
+
+const MAX_TRUNC_STRING_LENGTH = 10;
 
 require('./db/init.js');
 
-const { hashPassword, generateSalt } = require('./lib/authUtils.js');
+const { hashPassword, generateSalt, checkAuth, checkAdmin } = require('./lib/authUtils.js');
 
 const app = express();
 
@@ -41,23 +44,14 @@ app.get('/', (req, res) =>
 	res.send('<h1>Hello World</h1><p>welcome to the clubhouse</p><p>Go to <a href="/auth/login">login</a>'),
 );
 
-function checkAuth(req, res, next) {
-	if (!req.isAuthenticated()) {
-		res.redirect('/auth/login');
-		return;
-	}
-	next();
-}
-
-function checkAdmin(req, res, next) {
-	if (!req.user.admin) {
-		res.redirect('/auth/login');
-		return;
-	}
-	next();
-}
-
-app.get('/home', checkAuth, (req, res) => res.render('home', { username: req.user.username }));
+app.get('/home', checkAuth, async (req, res) => {
+	const result = await db.getAllMessagesWithClubCode();
+	const messages = result.rows;
+	console.log('USER CLUB CODE:', req.user.club_code);
+	console.log(messages);
+	//TODO: filter messages by club code dont want to send to client what they aren't supposed to see
+	res.render('home', { username: req.user.username, messages });
+});
 
 app.post('/message/create', checkAuth, async (req, res) => {
 	const userId = req.user.id;

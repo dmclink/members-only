@@ -39,4 +39,20 @@ function validatePassword(password, salt, hashedPassword) {
 	});
 }
 
-module.exports = { hashPassword, generateSalt, validatePassword };
+function checkAuth(req, res, next) {
+	if (!req.isAuthenticated()) {
+		res.redirect('/auth/login');
+		return;
+	}
+	next();
+}
+
+function checkAdmin(req, res, next) {
+	if (!req.user.admin) {
+		res.redirect('/auth/login');
+		return;
+	}
+	next();
+}
+
+module.exports = { hashPassword, generateSalt, validatePassword, checkAuth, checkAdmin };
