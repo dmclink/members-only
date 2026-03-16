@@ -48,6 +48,7 @@ function getAllMessagesWithClubCode() {
         FROM messages
         JOIN users
         ON users.id = messages.user_id
+        ORDER BY timestamp DESC
     `;
 
 	return db.query(query);

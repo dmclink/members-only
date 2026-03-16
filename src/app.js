@@ -49,6 +49,7 @@ app.get('/home', checkAuth, async (req, res) => {
 	const messages = result.rows;
 	console.log('USER CLUB CODE:', req.user.club_code);
 	console.log(messages);
+	//TODO: order by timestamp most recent
 	//TODO: filter messages by club code dont want to send to client what they aren't supposed to see
 	res.render('home', { username: req.user.username, messages });
 });
