@@ -5,6 +5,8 @@ const db = require('./db/queries.js');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 
+require('./db/init.js');
+
 const { hashPassword, generateSalt } = require('./lib/authUtils.js');
 
 const app = express();

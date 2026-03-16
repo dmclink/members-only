@@ -4,20 +4,22 @@ console.log('initializing db');
 db.query(
 	`
 CREATE TABLE IF NOT EXISTS users (
-	id INTEGER GENERATED ALWAYS AS IDENTITY,
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	username VARCHAR(255) UNIQUE,
 	hashed_password VARCHAR(255),
 	salt VARCHAR(255),
 	club_code VARCHAR(255),
 	admin BOOL
 )`,
-).catch((err) => console.error(err));
-
-db.query(
-	`
+)
+	.then(
+		db.query(
+			`
 CREATE TABLE IF NOT EXISTS messages (
-	id INTEGER GENERATED ALWAYS AS IDENTITY,
-	user_id REFERENCES users(id),
-	message VARCHAR(255),
+id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+user_id INTEGER REFERENCES users(id),
+message VARCHAR(255)
 )`,
-).catch((err) => console.error(err));
+		),
+	)
+	.catch((err) => console.error(err));
