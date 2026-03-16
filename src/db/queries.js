@@ -35,10 +35,10 @@ function insertNewUser(username, hashed_password, salt) {
 }
 
 function insertNewMessage(userId, content) {
-	return db.query('INSERT INTO messages (user_id, content, time) VALUES ($1, $2, $3)', [
+	return db.query('INSERT INTO messages (user_id, message, timestamp) VALUES ($1, $2, $3)', [
 		userId,
 		content,
-		new Date().toDateString(),
+		new Date(),
 	]);
 }
 
