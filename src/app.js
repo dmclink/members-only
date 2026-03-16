@@ -4,6 +4,8 @@ const db = require('./config/db.js');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 
+require('./db/init.js');
+
 const { hashPassword, generateSalt } = require('./lib/authUtils.js');
 
 const app = express();
@@ -28,69 +30,41 @@ const passport = require('./config/passport.js');
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-	next();
-});
-
 app.use(express.json());
 app.use(express.urlencoded());
 
-app.get('/', (req, res) => res.send('<h1>Hello World</h1>'));
-app.get('/login', (req, res, next) => {
-	res.render('login', { messages: req.session.messages });
-});
+const authRouter = require('./routes/auth.js');
+app.use('/auth', authRouter);
 
-app.get('/logout', (req, res) => {
-	req.logout((err) => {
-		if (err) {
-			return next(err);
-		}
-		res.redirect('/login');
-	});
-});
-
-app.post(
-	'/login/password',
-	passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login', failureMessage: true }),
+app.get('/', (req, res) =>
+	res.send('<h1>Hello World</h1><p>welcome to the clubhouse</p><p>Go to <a href="/auth/login">login</a>'),
 );
 
-app.get('/home', (req, res) => res.render('home'));
+function checkAuth(req, res, next) {
+	if (!req.isAuthenticated()) {
+		res.redirect('/auth/login');
+		return;
+	}
+	next();
+}
 
-app.get('/register', (req, res) => res.render('register'));
-app.post(
-	'/register',
-	async (req, res, next) => {
-		const password = req.body.password;
-		const username = req.body.username;
-		const query = `
-			SELECT EXISTS (
-				SELECT 1 FROM users WHERE username = $1
-			) AS user_exists;
-		`;
-		const values = [username];
+function checkAdmin(req, res, next) {
+	if (!req.user.admin) {
+		res.redirect('/auth/login');
+		return;
+	}
+	next();
+}
 
-		try {
-			const result = await db.query(query, values);
-			const exists = result.rows[0].user_exists;
-			if (exists) {
-				throw new Error(`user with username: ${username} already exists`);
-			}
+app.get('/home', checkAuth, (req, res) => res.render('home', { username: req.user.username }));
 
-			const salt = generateSalt();
-			const hashed_password = await hashPassword(password, salt);
+app.post('/message/create', checkAuth, (req, res) => {
+	const username = req.user.username;
+	const message = req.body.new_message;
 
-			await db.query(
-				'INSERT INTO users (username, hashed_password, salt, club_code, admin) VALUES ($1, $2, $3, $4, $5)',
-				[username, hashed_password, salt, '', false],
-			);
+	db.query('INSERT INTO messages (user_id, content, time) VALUES ($1, $2, $3)');
 
-			next();
-		} catch (err) {
-			console.error(err);
-			next(err);
-		}
-	},
-	(req, res) => res.redirect('/login'),
-);
+	res.redirect('/home');
+});
 
 app.listen(3000, 'localhost', () => console.log('listening on 3000'));

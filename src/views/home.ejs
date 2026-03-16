@@ -6,8 +6,30 @@
     <title>Document</title>
 </head>
 <body>
-        <h1>WOOOO YOU MADE IT</h1>
-        <p><a href="/logout">Log Out</a></p>
-    
+        <header>
+        <h1>Welcome <%= username %></h1>
+        <p><a href="/auth/logout">Log Out</a></p>
+        </header>
+
+        <main>
+            <form action="/message/create" method="POST">
+                <label for="new_message">New Message:</label>
+                <textarea name="new_message" id="new_message" rows="8" cols="30"></textarea>
+                <button type="submit">Post</button>
+            </form>
+
+            <div class="messages-container">
+                <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
+                <% for (const message of messages) { %>
+                <div class="message">
+                <% if (message.username) { %>
+                <p class="message__username"><%= message.username %></p>
+                <% } %>
+                <p class="message_content"><%= message.content %></p>
+                </div>
+                <% } %>
+                <% } %>
+            </div>
+        </main>
 </body>
 </html>

@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS users (
 	salt VARCHAR(255),
 	club_code VARCHAR(255),
 	admin BOOL
-) 
-`,
+)`,
+).catch((err) => console.error(err));
+
+db.query(
+	`
+CREATE TABLE IF NOT EXISTS messages (
+	id INTEGER GENERATED ALWAYS AS IDENTITY,
+	user_id REFERENCES users(id),
+	message VARCHAR(255),
+)`,
 ).catch((err) => console.error(err));

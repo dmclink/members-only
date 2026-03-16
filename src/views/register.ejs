@@ -8,7 +8,7 @@
 <body>
         <h1>Sign Up Page</h1>
         <p>Enter your username and password.</p>
-    <form action="/register" method="post">
+    <form action="/auth/register" method="post">
     <div>
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required />
@@ -20,6 +20,7 @@
     <div>
         <button type="submit">Register</button>
     </div>
+            <p>back to <a href="/auth/login">login</a></p>
 </form>
 </body>
 </html>
