@@ -32,7 +32,7 @@ router.post(
 		const username = req.body.username;
 
 		try {
-			const result = await db.getUserByUsername(username);
+			const result = await db.usernameAlreadyExists(username);
 			const exists = result.rows[0].user_exists;
 			if (exists) {
 				throw new Error(`user with username: ${username} already exists`);

@@ -14,6 +14,9 @@ const verifyCallback = (req, username, password, done) => {
 				return done(null, false, { message: 'Incorrect username or password.' });
 			}
 
+			console.log('USER:', user);
+			console.log('SALT:', user.salt);
+
 			const isValid = validatePassword(password, user.salt, user.hashed_password)
 				.then((isValid) => {
 					if (isValid) {
