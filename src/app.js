@@ -37,12 +37,15 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded());
 
-const authRouter = require('./routes/auth.js');
-app.use('/auth', authRouter);
-
 app.get('/', (req, res) =>
 	res.send('<h1>Hello World</h1><p>welcome to the clubhouse</p><p>Go to <a href="/auth/login">login</a>'),
 );
+
+const authRouter = require('./routes/auth.js');
+app.use('/auth', authRouter);
+
+const messageRouter = require('./routes/message.js');
+app.use('/message', messageRouter);
 
 app.get('/home', checkAuth, async (req, res) => {
 	const result = await db.getAllMessagesWithClubCode();
@@ -63,41 +66,6 @@ app.get('/home', checkAuth, async (req, res) => {
 	});
 
 	res.render('home', { username: req.user.username, messages: filteredMessages });
-});
-
-app.post('/message/create', checkAuth, async (req, res) => {
-	const userId = req.user.id;
-	const message = req.body.new_message;
-
-	await db.insertNewMessage(userId, message);
-
-	res.redirect('/home');
-});
-
-app.get('/message/delete/:id', checkAuth, async (req, res) => {
-	const messageId = req.params.id;
-	const userId = req.user.id;
-
-	const result = await db.getMessageById(messageId);
-	const message = result.rows[0];
-
-	if (!message) {
-		res.redirect('/home');
-		return;
-	}
-
-	const messageIsAuthoredByUser = userId === message.user_id;
-	const hasAdminPriv = isAdmin(req, res);
-	const canDelete = messageIsAuthoredByUser || hasAdminPriv;
-
-	if (!canDelete) {
-		res.redirect('/unauthorized');
-		return;
-	}
-
-	await db.deleteMessage(messageId);
-
-	res.redirect('/home');
 });
 
 app.get('/unauthorized', (req, res) => {
