@@ -62,7 +62,7 @@ app.get('/home', checkAuth, async (req, res) => {
 	// filter messages by club code
 	const filteredMessages = messages.map((msg) => {
 		if (!canView(msg.club_code)) {
-			return { ...msg, message: hideString(msg.message), username: null };
+			return { ...msg, message: hideString(msg.message), username: hideString(msg.username) };
 		}
 
 		return msg;
