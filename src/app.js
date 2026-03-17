@@ -14,6 +14,8 @@ const { hashPassword, generateSalt, checkAuth, checkAdmin, isAdmin } = require('
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -59,6 +61,7 @@ app.get('/home', checkAuth, async (req, res) => {
 
 	// filter messages by club code
 	const filteredMessages = messages.map((msg) => {
+		msg.timestamp = msg.timestamp.toLocaleString();
 		if (!canView(msg.club_code)) {
 			return { ...msg, message: hideString(msg.message), username: hideString(msg.username) };
 		}

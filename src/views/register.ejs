@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ClubHouse - Register</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-        <h1>Sign Up Page</h1>
-        <p>Enter your username and password.</p>
+  <main>
+    <h1>Sign Up Page</h1>
+    <p>Enter your desired username, password, and club code! Don't worry, you can change the club code later.</p>
     <form action="/auth/register" method="post">
-    <div>
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text" autocomplete="username" required />
-    </div>
-    <div>
-        <label for="new-password">Password</label>
-        <input id="new-password" name="password" type="password" autocomplete="off" required />
-    </div>
-    <div>
-        <label for="club-code">Club Code</label>
-        <input id="club-code" name="code" type="password" autocomplete="off" required />
-    </div>
-    <div>
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" required />
+      <label for="new-password">Password</label>
+      <input id="new-password" name="password" type="password" autocomplete="off" required />
+      <label for="club-code">Club Code</label>
+      <input id="club-code" name="code" type="password" autocomplete="off" required />
+      <div class="span-2">
         <button type="submit">Register</button>
-    </div>
+      </div>
+    </form>
     <p>back to <a href="/auth/login">login</a></p>
-</form>
+  </main>
 </body>
 </html>

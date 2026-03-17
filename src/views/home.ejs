@@ -3,40 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ClubHouse - Home</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-        <header>
-        <h1>Welcome <%= username %></h1>
-        <p><a href="/auth/logout">Log Out</a></p>
-            <a href="/user">User Settings</a>
-        </header>
+  <header class="home__header">
+    <h1 class="home__header-title">WELCOME <%= username %></h1>
+    <div><a href="/auth/logout">Log Out</a></div>
+    <div><a href="/user">User Settings</a></div>
+  </header>
 
-        <main>
-            <form action="/message/create" method="POST">
-                <label for="new_message">New Message:</label>
-                <textarea name="new_message" id="new_message" rows="8" cols="30" maxlength="255"></textarea>
-                <button type="submit">Post</button>
-            </form>
-
-            <div class="messages-container">
-                <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
-                  <% for (const message of messages) { %>
-                    <div class="message">
-                      <header>
-                        <% if (message.username) { %>
-                          <p class="message__username"><%= message.username %></p>
-                        <% } %>
-                        <p class="message__timestamp"><%= message.timestamp %></p>
-                        <% if (message.username && message.username === username) { %>                        <button type=""></button>
-                          <a href="/message/delete/<%= message.id %>">Delete</a>
-                        <% } %>
-                      </header>
-                      <p class="message__content"><%= message.message %></p>
-                    </div>
-                  <% } %>
+  <main>
+    <div class="messages-container">
+        <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
+          <% for (const message of messages) { %>
+            <div class="message">
+              <header class="message__header">
+                <% if (message.username) { %>
+                  <p class="message__username"><%= message.username %></p>
                 <% } %>
+                <p class="message__timestamp"><%= message.timestamp %></p>
+                <% if (message.username && message.username === username) { %>
+                  <p class="message__delete-button"><a href="/message/delete/<%= message.id %>">Delete</a></p>
+            <% } else { %>
+            <p> </p>
+            <% } %>
+              </header>
+              <p class="message__content"><%= message.message %></p>
             </div>
-        </main>
+          <% } %>
+        <% } %>
+    </div>
+
+    <div class="new-message-form-container">
+      <form class="new-message-form" action="/message/create" method="POST">
+          <label for="new_message">New Message:</label>
+          <textarea name="new_message" id="new_message" rows="8" cols="30" maxlength="255"></textarea>
+          <button type="submit">Post</button>
+      </form>
+    </div>
+  </main>
 </body>
 </html>
