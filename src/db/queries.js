@@ -22,14 +22,14 @@ function usernameAlreadyExists(username) {
 	return db.query(query, values);
 }
 
-function insertNewUser(username, hashed_password, salt) {
+function insertNewUser(username, hashed_password, salt, clubCode) {
 	const query = `
         INSERT INTO users 
             (username, hashed_password, salt, club_code, admin)
         VALUES 
             ($1, $2, $3, $4, $5)
     `;
-	const values = [username, hashed_password, salt, '', false];
+	const values = [username, hashed_password, salt, clubCode, false];
 
 	return db.query(query, values);
 }
@@ -44,7 +44,7 @@ function insertNewMessage(userId, content) {
 
 function getAllMessagesWithClubCode() {
 	const query = `
-        SELECT username, club_code, message, timestamp 
+        SELECT messages.id, username, club_code, message, timestamp 
         FROM messages
         JOIN users
         ON users.id = messages.user_id
@@ -54,6 +54,24 @@ function getAllMessagesWithClubCode() {
 	return db.query(query);
 }
 
+function getMessageById(id) {
+	const query = `
+        SELECT * FROM messages WHERE id = $1
+    `;
+	const values = [id];
+
+	return db.query(query, values);
+}
+
+function deleteMessage(id) {
+	const query = `
+        DELETE FROM messages WHERE id = $1
+    `;
+	const values = [id];
+
+	return db.query(query, values);
+}
+
 module.exports = {
 	getUserById,
 	getUserByUsername,
@@ -61,4 +79,6 @@ module.exports = {
 	insertNewMessage,
 	usernameAlreadyExists,
 	getAllMessagesWithClubCode,
+	getMessageById,
+	deleteMessage,
 };

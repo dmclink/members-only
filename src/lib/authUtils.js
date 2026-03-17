@@ -55,4 +55,8 @@ function checkAdmin(req, res, next) {
 	next();
 }
 
-module.exports = { hashPassword, generateSalt, validatePassword, checkAuth, checkAdmin };
+function isAdmin(req, res) {
+	return req.user.admin || false;
+}
+
+module.exports = { hashPassword, generateSalt, validatePassword, checkAuth, checkAdmin, isAdmin };

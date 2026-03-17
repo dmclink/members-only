@@ -4,13 +4,13 @@ const pool = require('./config/db.js');
 const db = require('./db/queries.js');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
-const { truncateString } = require('./lib/stringUtils.js');
+const { hideString } = require('./lib/stringUtils.js');
 
 const MAX_TRUNC_STRING_LENGTH = 10;
 
 require('./db/init.js');
 
-const { hashPassword, generateSalt, checkAuth, checkAdmin } = require('./lib/authUtils.js');
+const { hashPassword, generateSalt, checkAuth, checkAdmin, isAdmin } = require('./lib/authUtils.js');
 
 const app = express();
 
@@ -47,11 +47,22 @@ app.get('/', (req, res) =>
 app.get('/home', checkAuth, async (req, res) => {
 	const result = await db.getAllMessagesWithClubCode();
 	const messages = result.rows;
-	console.log('USER CLUB CODE:', req.user.club_code);
-	console.log(messages);
-	//TODO: order by timestamp most recent
-	//TODO: filter messages by club code dont want to send to client what they aren't supposed to see
-	res.render('home', { username: req.user.username, messages });
+	const userClubCode = req.user.club_code;
+
+	const canView = (messageClubCode) => {
+		return isAdmin(req, res) || messageClubCode === userClubCode;
+	};
+
+	// filter messages by club code
+	const filteredMessages = messages.map((msg) => {
+		if (!canView(msg.club_code)) {
+			return { ...msg, message: hideString(msg.message), username: null };
+		}
+
+		return msg;
+	});
+
+	res.render('home', { username: req.user.username, messages: filteredMessages });
 });
 
 app.post('/message/create', checkAuth, async (req, res) => {
@@ -61,6 +72,36 @@ app.post('/message/create', checkAuth, async (req, res) => {
 	await db.insertNewMessage(userId, message);
 
 	res.redirect('/home');
+});
+
+app.get('/message/delete/:id', checkAuth, async (req, res) => {
+	const messageId = req.params.id;
+	const userId = req.user.id;
+
+	const result = await db.getMessageById(messageId);
+	const message = result.rows[0];
+
+	if (!message) {
+		res.redirect('/home');
+		return;
+	}
+
+	const messageIsAuthoredByUser = userId === message.user_id;
+	const hasAdminPriv = isAdmin(req, res);
+	const canDelete = messageIsAuthoredByUser || hasAdminPriv;
+
+	if (!canDelete) {
+		res.redirect('/unauthorized');
+		return;
+	}
+
+	await db.deleteMessage(messageId);
+
+	res.redirect('/home');
+});
+
+app.get('/unauthorized', (req, res) => {
+	res.render('unauthorized');
 });
 
 app.listen(3000, 'localhost', () => console.log('listening on 3000'));

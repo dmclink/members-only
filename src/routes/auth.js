@@ -30,6 +30,7 @@ router.post(
 	async (req, res, next) => {
 		const password = req.body.password;
 		const username = req.body.username;
+		const clubCode = req.body.code;
 
 		try {
 			const result = await db.usernameAlreadyExists(username);
@@ -41,7 +42,7 @@ router.post(
 			const salt = generateSalt();
 			const hashed_password = await hashPassword(password, salt);
 
-			await db.insertNewUser(username, hashed_password, salt);
+			await db.insertNewUser(username, hashed_password, salt, clubCode);
 
 			next();
 		} catch (err) {

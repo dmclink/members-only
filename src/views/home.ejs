@@ -20,15 +20,20 @@
 
             <div class="messages-container">
                 <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
-                <% for (const message of messages) { %>
-                <div class="message">
-                <% if (message.username) { %>
-                <p class="message__username"><%= message.username %></p>
-                <% } %>
-                <p class="message__timestamp"><%= message.timestamp %></p>
-                <p class="message__content"><%= message.message %></p>
-                </div>
-                <% } %>
+                  <% for (const message of messages) { %>
+                    <div class="message">
+                      <header>
+                        <% if (message.username) { %>
+                          <p class="message__username"><%= message.username %></p>
+                        <% } %>
+                        <p class="message__timestamp"><%= message.timestamp %></p>
+                        <% if (message.username && message.username === username) { %>                        <button type=""></button>
+                          <a href="/message/delete/<%= message.id %>">Delete</a>
+                        <% } %>
+                      </header>
+                      <p class="message__content"><%= message.message %></p>
+                    </div>
+                  <% } %>
                 <% } %>
             </div>
         </main>
