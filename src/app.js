@@ -37,9 +37,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded());
 
-app.get('/', (req, res) =>
-	res.send('<h1>Hello World</h1><p>welcome to the clubhouse</p><p>Go to <a href="/auth/login">login</a>'),
-);
+app.get('/', (req, res) => res.render('index'));
 
 const authRouter = require('./routes/auth.js');
 app.use('/auth', authRouter);
