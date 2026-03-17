@@ -76,4 +76,6 @@ app.get('/unauthorized', (req, res) => {
 	res.render('unauthorized');
 });
 
-app.listen(3000, 'localhost', () => console.log('listening on 3000'));
+const PORT = 3000;
+
+app.listen(PORT);
