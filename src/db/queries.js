@@ -72,6 +72,28 @@ function deleteMessage(id) {
 	return db.query(query, values);
 }
 
+function updatePassword(id, newPasswordHash) {
+	const query = `
+		UPDATE users
+		SET hashed_password = $1
+		WHERE id = $2
+	`;
+	const values = [newPasswordHash, id];
+
+	return db.query(query, values);
+}
+
+function updateClubCode(id, newClubCode) {
+	const query = `
+		UPDATE users
+		SET club_code = $1
+		WHERE id = $2
+	`;
+	const values = [newClubCode, id];
+
+	return db.query(query, values);
+}
+
 module.exports = {
 	getUserById,
 	getUserByUsername,
@@ -81,4 +103,6 @@ module.exports = {
 	getAllMessagesWithClubCode,
 	getMessageById,
 	deleteMessage,
+	updatePassword,
+	updateClubCode,
 };

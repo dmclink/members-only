@@ -39,6 +39,12 @@ function validatePassword(password, salt, hashedPassword) {
 	});
 }
 
+function validateUserPass(req, password) {
+	const userSalt = req.user.salt;
+	const hashedPass = req.user.hashed_password;
+	return validatePassword(password, userSalt, hashedPass);
+}
+
 function checkAuth(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/auth/login');
@@ -59,4 +65,4 @@ function isAdmin(req, res) {
 	return req.user.admin || false;
 }
 
-module.exports = { hashPassword, generateSalt, validatePassword, checkAuth, checkAdmin, isAdmin };
+module.exports = { hashPassword, generateSalt, validatePassword, checkAuth, checkAdmin, isAdmin, validateUserPass };

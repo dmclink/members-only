@@ -47,6 +47,9 @@ app.use('/auth', authRouter);
 const messageRouter = require('./routes/message.js');
 app.use('/message', messageRouter);
 
+const userRouter = require('./routes/user.js');
+app.use('/user', userRouter);
+
 app.get('/home', checkAuth, async (req, res) => {
 	const result = await db.getAllMessagesWithClubCode();
 	const messages = result.rows;
