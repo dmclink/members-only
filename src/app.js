@@ -76,6 +76,6 @@ app.get('/unauthorized', (req, res) => {
 	res.render('unauthorized');
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT);
